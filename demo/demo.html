@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>滑动</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		body{
+			margin: 0;
+			padding: 0;
+			width: 1000px;
+			height: 1000px;			
+		}
+		#wrap{
+			width: 1000px;
+			height: 1000px;
+			overflow: hidden;
+			background: #CCCCCC;
+			position: relative;
+		}
+		#box{
+		    width: 100px;
+		    height: 100px;
+		    border: 1px solid #fff;
+		    margin: 300px auto;
+		    
+		}
+		.am1{
+	    	-webkit-animation:play 0.3s linear infinite;
+	    	-ms-animation:play 0.3s linear infinite;
+	    	animation:play 0.3s linear infinite;
+		}		
+		#cir{
+		    width: 30px;
+		    height: 30px;
+		    border-radius: 30px;
+		    background: red;
+		    line-height: 30px;
+		    text-align: center;
+		    color: white;
+		    position: absolute;
+		    left: 484px;
+		    top: 336px;	    			
+		}
+	    .m1{
+			transition: all 1s !important;	    	
+	    }
+	    
+	    .play1{
+	    	width: 500px !important;
+	    	height: 500px !important;
+	    	border-radius:500px !important;
+	    	line-height: 500px !important;
+	    	font-size: 250px !important;
+	    	opacity: 0 !important;
+	    }
+	    .m2{
+			display: none;    	
+	    }
+	    
+	    		
+		@keyframes play{
+	    0%  {
+		    width: 35px;
+		    height: 35px;
+		    line-height: 35px;	 
+		    font-size: 21px;      
+	        left: 480px;
+	        
+	    }
+	    25% {
+
+	        width: 35px;
+		    height: 35px;
+		    line-height: 35px;
+		    font-size: 21px;
+	        left: 484px;
+	        
+	    }
+	    50% {
+	    	width: 35px;
+		    height: 35px;
+		    line-height: 35px;
+		    font-size: 21px;
+	    	left: 489px;
+	    }
+	    75% {
+	    	width: 35px;
+		    height: 35px;
+		    line-height: 35px;
+		    font-size: 21px;
+	    	left: 484px;
+	    }
+	    100% {
+	    	width: 35px;
+		    height: 35px;
+		    line-height: 35px;
+		    font-size: 21px;
+	    	left: 480px;
+	    }
+
+	    	
+	    			    		    		
+	</style>
+	<body onselectstart="return false">
+		<div id="wrap">
+			<div id="box">
+				<div id="cir">16</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var startX,startY,endX,endY;
+		
+		var isCir=0;//判断是否在被点击上
+		var time1;//计时器
+		var isclick=false;//判断是否是直接点击
+		
+//		初始位置
+		document.getElementById("wrap").addEventListener('touchstart',function(evt){
+			evt.preventDefault();
+			var touch=evt.touches[0];
+			startX=parseInt(touch.pageX)
+			startY=parseInt(touch.pageY)
+//			console.log("X开始位置："+startX)
+//			console.log("Y开始位置："+startY)
+
+			
+
+//			开始判断是否点击上
+			if(startX>485&&startX<515&&startY>335&&startY<365){
+				$("#cir").addClass("am1");
+				isCir=1;//点击成功 标记下
+				isclick=true;//正在点击中。。。
+			}else{
+				isCir=0;
+			}
+		})
+		
+//		最终位置
+		document.getElementById("wrap").addEventListener('touchmove',function(evt){
+			evt.preventDefault();
+			var touch=evt.touches[0];
+			endX=parseInt(touch.pageX);
+			endY=parseInt(touch.pageY);
+			console.log("X当前值："+endX);
+			console.log("Y当前值："+endY);
+			
+			isclick=false;//如果移动了，点击事件取消
+			
+//			cir伴随着鼠标移动
+			if(isCir==1){
+				$("#cir").removeClass("am1");
+				$("#cir").css("left",endX-15)//减去自身宽高一半
+				$("#cir").css("top",endY-15)//同理
+				
+			}
+			
+
+			
+		})
+		
+//		计算位移了多少
+		document.getElementById("wrap").addEventListener('touchend',function(evt){
+			var moveX=endX-startX;
+			var moveY=endY-startY;
+//			console.log("X位移："+moveX);
+//			console.log("Y位移："+moveY);
+			$("#cir").removeClass("am1");
+//			直接是点击事件
+			if(isclick){
+				$("#cir").addClass("m2");
+				clearTimeout(time1)
+				time1 =setTimeout(function(){
+					init()
+				},1000)				
+			}
+			
+			
+//			判断最终是否超出界限
+			if(isCir==1){
+				if(endX>550+15||endX<450-15||endY>400+15||endY<300-15){
+					console.log("超出");
+					$("#cir").addClass("m1");
+					$("#cir").addClass("play1")
+				
+					clearTimeout(time1)
+					time1 =setTimeout(function(){
+						init()
+					},1000)
+				
+				}else{
+					$("#cir").css("left","484px")//减去自身宽高一半
+					$("#cir").css("top","336px")//同理
+				}
+				
+			}
+			isclick=false;//恢复	
+			
+
+		})
+		
+		
+//		恢复初始化
+		function init(){
+			$("#cir").removeClass("m1")
+			$("#cir").removeClass("m2")
+			$("#cir").removeClass("play1")
+			$("#cir").removeClass("play2")
+			$("#cir").css("left","484px")
+			$("#cir").css("top","336px")	
+			
+		}
+
+		
+
+	</script>
+</html>
